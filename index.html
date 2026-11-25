@@ -86,8 +86,11 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
   <h1>Laporkan barang hilang</h1>
   <p class="mute">Semakin lengkap ciri barang, semakin akurat kecocokannya.</p>
   <label for="l-cat">Jenis barang</label><select id="l-cat"></select>
+  <input id="l-cat-other" style="margin-top:8px" placeholder="Tulis jenis barang lain, mis. payung" maxlength="40" aria-label="Jenis barang lainnya" hidden>
   <label for="l-col">Warna</label><select id="l-col"></select>
+  <input id="l-col-other" style="margin-top:8px" placeholder="Ketik warna lain, mis. ungu" maxlength="30" aria-label="Warna lainnya" hidden>
   <label for="l-loc">Lokasi terakhir</label><select id="l-loc"></select>
+  <input id="l-loc-other" style="margin-top:8px" placeholder="Ketik lokasi lain, mis. Gedung Kuliah C" maxlength="60" aria-label="Lokasi lainnya" hidden>
   <label for="l-time">Waktu hilang</label><input id="l-time" type="datetime-local">
   <label for="l-desc">Ciri khusus (opsional)</label><textarea id="l-desc" placeholder="Contoh: ada stiker kecil di bagian dalam"></textarea>
   <label for="l-photo">Foto barang sejenis (opsional)</label><input id="l-photo" type="file" accept="image/*">
@@ -100,8 +103,11 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
   <h1>Laporkan barang temuan</h1>
   <p class="mute">Kamu tidak perlu tahu siapa pemiliknya. Titipkan ke petugas, sisanya kami urus.</p>
   <label for="f-cat">Jenis barang</label><select id="f-cat"></select>
+  <input id="f-cat-other" style="margin-top:8px" placeholder="Tulis jenis barang lain, mis. payung" maxlength="40" aria-label="Jenis barang lainnya" hidden>
   <label for="f-col">Warna</label><select id="f-col"></select>
+  <input id="f-col-other" style="margin-top:8px" placeholder="Ketik warna lain, mis. ungu" maxlength="30" aria-label="Warna lainnya" hidden>
   <label for="f-loc">Lokasi ditemukan</label><select id="f-loc"></select>
+  <input id="f-loc-other" style="margin-top:8px" placeholder="Ketik lokasi lain, mis. Gedung Kuliah C" maxlength="60" aria-label="Lokasi lainnya" hidden>
   <label for="f-desc">Ciri barang (opsional)</label><textarea id="f-desc" placeholder="Contoh: ada gantungan kunci kucing"></textarea>
   <label for="f-q">Pertanyaan verifikasi untuk pemilik</label><input id="f-q" placeholder="Contoh: Apa isi di dalam tas?">
   <p class="hint">Jawabannya hanya diketahui pemilik. Jangan tulis ciri yang terlihat jelas.</p>
@@ -153,8 +159,8 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 <script>
 var CATS=["Dompet","Tumbler","Kartu mahasiswa","Charger","Jaket","Buku","Kunci","Lainnya"];
 var ICON={"Dompet":"👛","Tumbler":"🥤","Kartu mahasiswa":"🪪","Charger":"🔌","Jaket":"🧥","Buku":"📘","Kunci":"🔑","Lainnya":"🎒"};
-var COLS=["Hitam","Putih","Cokelat","Biru","Merah","Hijau","Abu-abu"];
-var LOCS=["Perpustakaan","Kantin","Gedung Kuliah A","Gedung Kuliah B","Masjid kampus","Area parkir","Lab komputer"];
+var COLS=["Hitam","Putih","Cokelat","Biru","Merah","Hijau","Abu-abu","Lainnya"];
+var LOCS=["Perpustakaan","Kantin","Gedung Kuliah A","Gedung Kuliah B","Masjid kampus","Area parkir","Lab komputer","Lainnya"];
 var STEPS=["Dilaporkan","Dicocokkan","Diverifikasi","Dikembalikan"];
 var items=[
  {id:1,cat:"Dompet",col:"Cokelat",loc:"Perpustakaan",time:"Hari ini, 10.20",desc:"dompet kulit ada stiker kecil di dalam",q:"Apa warna stiker di dalam dompet?",a:"kuning",status:0},
@@ -165,11 +171,33 @@ var items=[
 ];
 var state={lost:null,sel:null,mine:null,filter:"Semua",role:"user"};
 var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]})}
+function same(a,b){return String(a).trim().toLowerCase()==String(b).trim().toLowerCase()}
 function opts(sel,arr){$(sel).innerHTML=arr.map(function(x){return "<option>"+x+"</option>"}).join("")}
 ["l","f"].forEach(function(p){opts("#"+p+"-cat",CATS);opts("#"+p+"-col",COLS);opts("#"+p+"-loc",LOCS)});
+["l","f"].forEach(function(p){
+  ["cat","col","loc"].forEach(function(field){
+    $("#"+p+"-"+field).addEventListener("change",function(){
+      var o=$("#"+p+"-"+field+"-other");
+      if(!o)return;
+      o.hidden=this.value!="Lainnya";
+      if(!o.hidden)o.focus();
+    });
+  });
+});
+function customVal(p,field){
+  var v=$("#"+p+"-"+field).value;
+  if(v!="Lainnya")return v;
+  var input=$("#"+p+"-"+field+"-other");
+  var t=input?input.value.trim():"";
+  return t?t.charAt(0).toUpperCase()+t.slice(1):"";
+}
+function catVal(p){return customVal(p,"cat")}
+function colVal(p){return customVal(p,"col")}
+function locVal(p){return customVal(p,"loc")}
 
 function itemCard(it,extra){
- return '<div class="item"><div class="ico" aria-hidden="true">'+(ICON[it.cat]||"🎒")+'</div><div style="flex:1"><h3>'+it.cat+' '+it.col.toLowerCase()+'</h3><div class="meta">'+it.loc+' · '+it.time+'</div><div><span class="tag '+(it.status==3?"ok":"")+'">'+STEPS[it.status]+'</span></div>'+(extra||"")+'</div></div>';
+ return '<div class="item"><div class="ico" aria-hidden="true">'+(ICON[it.cat]||"🎒")+'</div><div style="flex:1"><h3>'+esc(it.cat)+' '+esc(it.col.toLowerCase())+'</h3><div class="meta">'+esc(it.loc)+' · '+esc(it.time)+'</div><div><span class="tag '+(it.status==3?"ok":"")+'">'+STEPS[it.status]+'</span></div>'+(extra||"")+'</div></div>';
 }
 function renderHome(){
  var chips=["Semua"].concat(CATS.slice(0,6));
@@ -180,9 +208,9 @@ function renderHome(){
 }
 function score(lost,it){
  var s=0,why=[];
- if(lost.cat==it.cat){s+=50;why.push("Jenis sama")}
- if(lost.col==it.col){s+=20;why.push("Warna sama")}
- if(lost.loc==it.loc){s+=20;why.push("Lokasi sama")}
+ if(same(lost.cat,it.cat)){s+=50;why.push("Jenis sama")}
+ if(same(lost.col,it.col)){s+=20;why.push("Warna sama")}
+ if(same(lost.loc,it.loc)){s+=20;why.push("Lokasi sama")}
  var w=lost.desc.toLowerCase().split(/\W+/).filter(function(x){return x.length>3});
  var hit=w.filter(function(x){return it.desc.toLowerCase().indexOf(x)>-1});
  if(hit.length){s+=10;why.push("Ciri mirip")}
@@ -193,7 +221,7 @@ function renderMatches(){
  var r=items.filter(function(i){return i.status<3}).map(function(i){var m=score(L,i);return {it:i,s:m.s,why:m.why}}).filter(function(x){return x.s>=50}).sort(function(a,b){return b.s-a.s});
  $("#m-sum").textContent=r.length?"Ditemukan "+r.length+" kemungkinan untuk "+L.cat.toLowerCase()+" "+L.col.toLowerCase()+" yang hilang di "+L.loc+". Laporanmu aktif dan kami akan memberi tahu bila ada temuan baru.":"Belum ada kecocokan. Laporanmu tetap aktif dan kami akan memberi tahu bila ada temuan baru yang sesuai.";
  $("#m-list").innerHTML=r.map(function(x){
-  return '<div class="item"><div class="ico" aria-hidden="true">'+ICON[x.it.cat]+'</div><div style="flex:1"><h3>'+x.it.cat+' '+x.it.col.toLowerCase()+'</h3><div class="meta">'+x.it.loc+' · '+x.it.time+'</div><div class="why">'+x.why.map(function(w){return '<span class="tag ok">'+w+'</span>'}).join("")+'</div><button class="btn full" data-claim="'+x.it.id+'" style="margin-top:12px;padding:10px">Ini barang saya</button></div><div class="score"><b>'+x.s+'%</b><span class="meta">cocok</span></div></div>';
+  return '<div class="item"><div class="ico" aria-hidden="true">'+(ICON[x.it.cat]||"🎒")+'</div><div style="flex:1"><h3>'+esc(x.it.cat)+' '+esc(x.it.col.toLowerCase())+'</h3><div class="meta">'+esc(x.it.loc)+' · '+esc(x.it.time)+'</div><div class="why">'+x.why.map(function(w){return '<span class="tag ok">'+w+'</span>'}).join("")+'</div><button class="btn full" data-claim="'+x.it.id+'" style="margin-top:12px;padding:10px">Ini barang saya</button></div><div class="score"><b>'+x.s+'%</b><span class="meta">cocok</span></div></div>';
  }).join("");
 }
 function toast(t){var e=document.createElement("div");e.className="toast";e.setAttribute("role","status");e.textContent=t;document.body.appendChild(e);setTimeout(function(){e.remove()},2600)}
@@ -209,7 +237,7 @@ function renderStatus(){
 function renderStaff(){
  $("#staffRows").innerHTML=items.map(function(i){
   var btn=i.status<3?'<button class="chip" data-adv="'+i.id+'">'+(i.status==2?"Tandai dikembalikan":"Majukan status")+'</button>':'<span class="tag ok">Selesai</span>';
-  return '<tr><td>'+i.cat+' '+i.col.toLowerCase()+'</td><td>'+i.loc+'</td><td>'+STEPS[i.status]+'</td><td>'+btn+'</td></tr>';
+  return '<tr><td>'+esc(i.cat)+' '+esc(i.col.toLowerCase())+'</td><td>'+esc(i.loc)+'</td><td>'+STEPS[i.status]+'</td><td>'+btn+'</td></tr>';
  }).join("");
 }
 function route(){
@@ -233,16 +261,21 @@ document.addEventListener("click",function(e){
 });
 $("#q").addEventListener("input",renderHome);
 $("#l-submit").onclick=function(){
- if(!$("#l-time").value){$("#l-err").textContent="Pilih perkiraan waktu hilang agar pencarian lebih akurat.";$("#l-time").focus();return}
- $("#l-err").textContent="";
- state.lost={cat:$("#l-cat").value,col:$("#l-col").value,loc:$("#l-loc").value,desc:$("#l-desc").value};
+ var err=$("#l-err");err.textContent="";
+ if(!catVal("l")){err.textContent="Tulis jenis barang pada kolom yang muncul.";$("#l-cat-other").focus();return}
+ if(!colVal("l")){err.textContent="Tulis warna barang pada kolom yang muncul.";$("#l-col-other").focus();return}
+ if(!locVal("l")){err.textContent="Tulis lokasi terakhir pada kolom yang muncul.";$("#l-loc-other").focus();return}
+ if(!$("#l-time").value){err.textContent="Pilih perkiraan waktu hilang agar pencarian lebih akurat.";$("#l-time").focus();return}
+ state.lost={cat:catVal("l"),col:colVal("l"),loc:locVal("l"),desc:$("#l-desc").value};
  toast("Laporan kehilangan tersimpan");go("matches");
 };
 $("#f-submit").onclick=function(){
- var q=$("#f-q").value.trim(),a=$("#f-a").value.trim();
- if(!q||!a){$("#f-err").textContent="Isi pertanyaan verifikasi dan jawabannya agar barang aman dari klaim palsu.";return}
- $("#f-err").textContent="";
- var it={id:Date.now(),cat:$("#f-cat").value,col:$("#f-col").value,loc:$("#f-loc").value,time:"Baru saja",desc:$("#f-desc").value,q:q,a:a.toLowerCase(),status:0};
+ var err=$("#f-err"),q=$("#f-q").value.trim(),a=$("#f-a").value.trim();err.textContent="";
+ if(!catVal("f")){err.textContent="Tulis jenis barang pada kolom yang muncul.";$("#f-cat-other").focus();return}
+ if(!colVal("f")){err.textContent="Tulis warna barang pada kolom yang muncul.";$("#f-col-other").focus();return}
+ if(!locVal("f")){err.textContent="Tulis lokasi ditemukan pada kolom yang muncul.";$("#f-loc-other").focus();return}
+ if(!q||!a){err.textContent="Isi pertanyaan verifikasi dan jawabannya agar barang aman dari klaim palsu.";return}
+ var it={id:Date.now(),cat:catVal("f"),col:colVal("f"),loc:locVal("f"),time:"Baru saja",desc:$("#f-desc").value,q:q,a:a.toLowerCase(),status:0};
  items.unshift(it);state.mine=it;toast("Laporan temuan terkirim. Titipkan barang ke pos petugas.");go("status");
 };
 $("#vf-submit").onclick=function(){
