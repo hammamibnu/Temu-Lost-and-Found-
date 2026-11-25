@@ -1,365 +1,759 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>TEMU: Lost and Found Kampus</title>
-<style>
-:root{color-scheme:light;--bg:#d4e9f8;--card:#f8fcff;--ink:#0f2f47;--mute:#3f6079;--line:#a9cde6;--pri:#0b72b8;--pri-t:#fff;--soft:#bfe0f5;--amb:#ffb81c;--amb-t:#3a2800;--ok:#11692f;--okbg:#cfeedb;--bad:#b42318;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-*{box-sizing:border-box}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;padding-bottom:84px}
-.wrap{max-width:720px;margin:0 auto;padding:0 16px}
-header{display:flex;align-items:center;justify-content:space-between;padding:16px 0 8px}
-.logo{font-weight:800;font-size:28px;letter-spacing:.5px;color:#075a93;text-decoration:none}
-.logo small{display:block;font-size:12px;font-weight:500;color:var(--mute);letter-spacing:0}
-h1{font-size:28px;line-height:1.2;margin:16px 0 8px}
-h2{font-size:20px;margin:24px 0 8px}
-p{margin:0 0 12px}.mute{color:var(--mute)}
-.intro{position:relative;overflow:hidden;background:linear-gradient(135deg,#0b72b8,#1a8fd0);color:#fff;border-radius:22px;padding:20px 96px 20px 20px;margin:8px 0}.intro h1{margin:0 0 6px;font-size:26px}.intro p{margin:0;opacity:.95}.intro::after{content:"🔎";position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:56px}
-.hero{display:grid;gap:12px;margin:16px 0}
-.big{display:block;text-align:left;border:0;border-radius:18px;padding:20px;font:inherit;cursor:pointer;width:100%}
-.big b{display:block;font-size:20px}.big span{font-size:14px;opacity:.9}
-.big.lost{background:linear-gradient(135deg,#0b72b8,#1a8fd0);color:#fff;box-shadow:0 6px 14px rgba(11,114,184,.3)}
-.big.found{background:linear-gradient(135deg,#ffb81c,#ff9640);color:var(--amb-t);box-shadow:0 6px 14px rgba(255,150,64,.35)}
-.search{display:flex;gap:8px;margin:12px 0}
-input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:12px}
-textarea{min-height:84px;resize:vertical}
-label{display:block;font-weight:600;margin:14px 0 6px}
-.hint{font-size:13px;color:var(--mute);margin-top:4px}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
-.chip{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;cursor:pointer}
-.chip[aria-pressed="true"]{background:var(--pri);color:var(--pri-t);border-color:var(--pri)}
-.item{background:var(--card);border:1px solid var(--line);box-shadow:0 2px 8px rgba(11,114,184,.12);border-radius:16px;padding:14px;margin:10px 0;display:flex;gap:12px;align-items:flex-start}
-.ico{flex:none;width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#bfe0f5,#ffe3a3);display:grid;place-items:center;font-size:26px}
-.item h3{margin:0;font-size:17px}.meta{font-size:13px;color:var(--mute)}
-.tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--soft);color:#075a93;margin-right:6px}
-.tag.ok{background:var(--okbg);color:var(--ok)}
-.btn{display:inline-block;border:0;border-radius:12px;padding:14px 20px;font:inherit;font-weight:700;background:var(--pri);color:var(--pri-t);cursor:pointer;min-height:48px}
-.btn.ghost{background:transparent;color:var(--pri);border:1.5px solid var(--pri)}
-.btn.full{width:100%;margin-top:18px}
-.score{margin-left:auto;text-align:center;flex:none}
-.score b{display:block;font-size:24px;color:var(--ok)}
-.why{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.steps{list-style:none;padding:0;margin:16px 0}
-.steps li{display:flex;gap:14px;padding-bottom:20px;position:relative}
-.steps li::before{content:"";position:absolute;left:13px;top:28px;bottom:0;width:2px;background:var(--line)}
-.steps li:last-child::before{display:none}
-.dot{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--line);background:var(--card);display:grid;place-items:center;font-size:14px;font-weight:700}
-.steps .done .dot{background:var(--ok);border-color:var(--ok);color:#fff}
-.steps .now .dot{border-color:var(--pri);color:var(--pri)}
-.steps .done::before{background:var(--ok)}
-nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:2px solid var(--line);box-shadow:0 -4px 12px rgba(11,114,184,.12);display:flex;justify-content:space-around;padding:6px 0 calc(6px + env(safe-area-inset-bottom,0px));z-index:5}
-nav a{flex:1;text-align:center;font-size:12px;color:var(--mute);text-decoration:none;padding:6px 0;min-height:48px}
-nav a span{display:block;font-size:22px}
-nav a[aria-current="page"]{color:var(--pri);font-weight:700}
-.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-size:14px;z-index:9;max-width:90%}
-.err{color:var(--bad);font-size:13px;margin-top:4px}
-.banner{background:var(--soft);border-left:5px solid var(--pri);border-radius:14px;padding:12px 14px;font-size:14px;margin:12px 0}
-:focus-visible{outline:3px solid var(--amb);outline-offset:2px}
-.view{display:none}.view.on{display:block}
-table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:10px 6px;border-bottom:1px solid var(--line);vertical-align:top}
-@media (min-width:600px){.hero{grid-template-columns:1fr 1fr}}
-@media (prefers-reduced-motion:no-preference){.view.on{animation:in .2s ease-out}@keyframes in{from{opacity:.4}to{opacity:1}}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TEMU — Platform Barang Hilang & Ditemukan</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --warning: #d97706;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); line-height: 1.6; }
+
+    /* Navbar */
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0.9rem 1.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .brand {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .nav-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: 0.15s;
+    }
+    .nav-btn:hover, .nav-btn.active {
+      background: #eff6ff;
+      color: var(--primary);
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .btn-outline {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    /* Main Container */
+    main {
+      max-width: 1100px;
+      margin: 1.5rem auto;
+      padding: 0 1.2rem 3rem;
+    }
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: #fff;
+      padding: 2rem;
+      border-radius: 14px;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 0.4rem; }
+    .hero p { opacity: 0.9; margin-bottom: 1.1rem; max-width: 650px; }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .filter-bar input, .filter-bar select {
+      padding: 0.55rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-size: 0.95rem;
+    }
+    .filter-bar input { flex: 1; min-width: 220px; }
+
+    /* Grid Cards */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1.15rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    }
+    .card img {
+      width: 100%;
+      height: 175px;
+      object-fit: cover;
+      background: #e2e8f0;
+    }
+    .card-body {
+      padding: 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+    .badge-hilang { background: #fee2e2; color: var(--danger); }
+    .badge-ditemukan { background: #dcfce7; color: var(--success); }
+    .badge-selesai { background: #e2e8f0; color: #334155; }
+    .card-title { font-size: 1.08rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .card-meta { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.75rem; }
+
+    /* Forms */
+    .form-card {
+      max-width: 560px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 1.75rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 0.35rem; font-size: 0.92rem; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+    .form-group textarea { min-height: 95px; resize: vertical; }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    th, td {
+      padding: 0.75rem 0.9rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    th { background: #f1f5f9; font-weight: 700; }
+
+    /* Modal Detail */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 100;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: #fff;
+      max-width: 540px;
+      width: 100%;
+      border-radius: 14px;
+      padding: 1.5rem;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal img {
+      width: 100%;
+      max-height: 240px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      background: #eff6ff;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      border-top: 1px solid var(--border);
+      background: #fff;
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-<header><a class="logo" href="#home">TEMU<small>Lost and Found kampus</small></a><button class="chip" id="roleBtn" aria-label="Ganti peran">Peran: Pengguna</button></header>
+
+<header>
+  <div class="nav-container">
+    <a class="brand" onclick="showSection('home')">TEMU</a>
+    <nav class="nav-links" id="navLinks"></nav>
+  </div>
+</header>
 
 <main>
-<section class="view" id="v-home">
-  <div class="intro"><h1>Barang hilang atau menemukan barang?</h1>
-  <p>Laporkan di satu tempat. TEMU mencarikan kecocokannya untuk kamu.</p></div>
-  <div class="hero">
-    <button class="big lost" data-go="lost"><b>Saya kehilangan barang</b><span>Isi ciri barang, kami cocokkan dengan temuan.</span></button>
-    <button class="big found" data-go="found"><b>Saya menemukan barang</b><span>Foto dan laporkan dalam satu menit.</span></button>
-  </div>
-  <h2>Barang temuan terbaru</h2>
-  <div class="search"><input id="q" type="search" placeholder="Cari: dompet, tumbler, kartu…" aria-label="Cari barang temuan"></div>
-  <div class="chips" id="homeChips" role="group" aria-label="Filter kategori"></div>
-  <div id="homeList"></div>
-</section>
+  <!-- BERANDA / DAFTAR BARANG -->
+  <section id="sec-home" class="section active">
+    <div class="hero">
+      <h1>Temukan & Kembalikan Barang yang Hilang</h1>
+      <p>Laporkan barang hilang atau barang temuan di sekitar kampus dan lingkunganmu dengan mudah.</p>
+      <button class="btn-primary" style="background:#fff;color:#1d4ed8;" onclick="goCreate()">+ Buat Laporan Baru</button>
+    </div>
 
-<section class="view" id="v-lost">
-  <h1>Laporkan barang hilang</h1>
-  <p class="mute">Semakin lengkap ciri barang, semakin akurat kecocokannya.</p>
-  <label for="l-cat">Jenis barang</label><select id="l-cat"></select>
-  <input id="l-cat-other" style="margin-top:8px" placeholder="Tulis jenis barang lain, mis. payung" maxlength="40" aria-label="Jenis barang lainnya" hidden>
-  <label for="l-col">Warna</label><select id="l-col"></select>
-  <input id="l-col-other" style="margin-top:8px" placeholder="Ketik warna lain, mis. ungu" maxlength="30" aria-label="Warna lainnya" hidden>
-  <label for="l-loc">Lokasi terakhir</label><select id="l-loc"></select>
-  <input id="l-loc-other" style="margin-top:8px" placeholder="Ketik lokasi lain, mis. Gedung Kuliah C" maxlength="60" aria-label="Lokasi lainnya" hidden>
-  <label for="l-time">Waktu hilang</label><input id="l-time" type="datetime-local">
-  <label for="l-desc">Ciri khusus (opsional)</label><textarea id="l-desc" placeholder="Contoh: ada stiker kecil di bagian dalam"></textarea>
-  <label for="l-photo">Foto barang sejenis (opsional)</label><input id="l-photo" type="file" accept="image/*">
-  <p class="hint">Foto belum dipakai pada prototype ini.</p>
-  <div class="err" id="l-err" role="alert"></div>
-  <button class="btn full" id="l-submit">Cari kecocokan</button>
-</section>
+    <div class="filter-bar">
+      <input type="text" id="searchInput" placeholder="Cari nama barang, lokasi, atau deskripsi..." oninput="renderItems()" />
+      <select id="typeFilter" onchange="renderItems()">
+        <option value="all">Semua Kategori</option>
+        <option value="hilang">Barang Hilang</option>
+        <option value="ditemukan">Barang Ditemukan</option>
+      </select>
+      <select id="statusFilter" onchange="renderItems()">
+        <option value="all">Semua Status</option>
+        <option value="aktif">Aktif</option>
+        <option value="selesai">Sudah Diklaim / Selesai</option>
+      </select>
+    </div>
 
-<section class="view" id="v-found">
-  <h1>Laporkan barang temuan</h1>
-  <p class="mute">Kamu tidak perlu tahu siapa pemiliknya. Titipkan ke petugas, sisanya kami urus.</p>
-  <label for="f-cat">Jenis barang</label><select id="f-cat"></select>
-  <input id="f-cat-other" style="margin-top:8px" placeholder="Tulis jenis barang lain, mis. payung" maxlength="40" aria-label="Jenis barang lainnya" hidden>
-  <label for="f-col">Warna</label><select id="f-col"></select>
-  <input id="f-col-other" style="margin-top:8px" placeholder="Ketik warna lain, mis. ungu" maxlength="30" aria-label="Warna lainnya" hidden>
-  <label for="f-loc">Lokasi ditemukan</label><select id="f-loc"></select>
-  <input id="f-loc-other" style="margin-top:8px" placeholder="Ketik lokasi lain, mis. Gedung Kuliah C" maxlength="60" aria-label="Lokasi lainnya" hidden>
-  <label for="f-desc">Ciri barang (opsional)</label><textarea id="f-desc" placeholder="Contoh: ada gantungan kunci kucing"></textarea>
-  <label for="f-q">Pertanyaan verifikasi untuk pemilik</label><input id="f-q" placeholder="Contoh: Apa isi di dalam tas?">
-  <p class="hint">Jawabannya hanya diketahui pemilik. Jangan tulis ciri yang terlihat jelas.</p>
-  <label for="f-a">Jawaban yang benar</label><input id="f-a" placeholder="Hanya terlihat oleh petugas">
-  <div class="err" id="f-err" role="alert"></div>
-  <button class="btn full" id="f-submit">Kirim laporan</button>
-</section>
+    <div class="grid" id="itemsGrid"></div>
+  </section>
 
-<section class="view" id="v-matches">
-  <h1>Kemungkinan kecocokan</h1>
-  <div class="banner" id="m-sum"></div>
-  <div id="m-list"></div>
-  <button class="btn ghost" data-go="lost">Ubah laporan kehilangan</button>
-</section>
+  <!-- BUAT LAPORAN -->
+  <section id="sec-create" class="section">
+    <div class="form-card">
+      <h2 style="margin-bottom:1rem;">Buat Laporan Barang</h2>
+      <form onsubmit="handleCreateItem(event)">
+        <div class="form-group">
+          <label>Jenis Laporan</label>
+          <select id="itemType" required>
+            <option value="hilang">Kehilangan Barang</option>
+            <option value="ditemukan">Menemukan Barang</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nama Barang</label>
+          <input type="text" id="itemTitle" placeholder="Contoh: Dompet Hitam / Kunci Motor" required />
+        </div>
+        <div class="form-group">
+          <label>Lokasi Kejadian</label>
+          <input type="text" id="itemLocation" placeholder="Contoh: Gedung A Lantai 2 / Kantin" required />
+        </div>
+        <div class="form-group">
+          <label>Tanggal</label>
+          <input type="date" id="itemDate" required />
+        </div>
+        <div class="form-group">
+          <label>Kontak Pelapor (WhatsApp / Email)</label>
+          <input type="text" id="itemContact" placeholder="0812xxxxxxxx" required />
+        </div>
+        <div class="form-group">
+          <label>Deskripsi & Ciri Khusus</label>
+          <textarea id="itemDesc" placeholder="Jelaskan ciri barang secara spesifik..." required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Foto Barang (Opsional)</label>
+          <input type="file" id="itemPhoto" accept="image/*" />
+        </div>
+        <div style="display:flex;gap:0.6rem;">
+          <button type="submit" class="btn-primary">Kirim Laporan</button>
+          <button type="button" class="btn-outline" onclick="showSection('home')">Batal</button>
+        </div>
+      </form>
+    </div>
+  </section>
 
-<section class="view" id="v-verify">
-  <h1>Verifikasi kepemilikan</h1>
-  <div id="vf-item"></div>
-  <p class="banner">Jawab pertanyaan di bawah untuk membuktikan ini barangmu. Foto lengkap tidak ditampilkan sebelum verifikasi.</p>
-  <label for="vf-ans" id="vf-q">Pertanyaan</label>
-  <input id="vf-ans" autocomplete="off">
-  <div class="err" id="vf-err" role="alert"></div>
-  <button class="btn full" id="vf-submit">Kirim jawaban</button>
-</section>
+  <!-- LAPORAN SAYA -->
+  <section id="sec-my" class="section">
+    <h2 style="margin-bottom:1rem;">Laporan Saya</h2>
+    <div class="grid" id="myItemsGrid"></div>
+  </section>
 
-<section class="view" id="v-status">
-  <h1>Status pengembalian</h1>
-  <div id="st-item"></div>
-  <ol class="steps" id="st-steps"></ol>
-  <div class="banner" id="st-info"></div>
-  <button class="btn ghost" data-go="home">Kembali ke beranda</button>
-</section>
+  <!-- PANEL ADMIN -->
+  <section id="sec-admin" class="section">
+    <h2 style="margin-bottom:1rem;">Panel Admin — Kelola Laporan & Klaim</h2>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Barang</th>
+            <th>Jenis</th>
+            <th>Pelapor</th>
+            <th>Status</th>
+            <th>Klaim Masuk</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="adminTableBody"></tbody>
+      </table>
+    </div>
+  </section>
 
-<section class="view" id="v-slogin">
-  <h1>Masuk petugas</h1>
-  <p class="mute">Tampilan petugas hanya untuk petugas yang sudah terverifikasi.</p>
-  <label for="sl-id">NIP / ID petugas</label><input id="sl-id" autocomplete="username">
-  <label for="sl-pw">Kata sandi</label><input id="sl-pw" type="password" autocomplete="current-password">
-  <div class="err" id="sl-err" role="alert"></div>
-  <button class="btn full" id="sl-submit">Masuk</button>
-  <button class="btn ghost full" data-go="sreg">Belum punya akun? Daftar petugas</button>
-  <p class="hint" style="margin-top:12px">Akun demo prototype: PTG-001 / petugas123</p>
-</section>
-
-<section class="view" id="v-sreg">
-  <h1>Daftar petugas</h1>
-  <p class="mute">Akun baru aktif setelah kode undangan dan kode verifikasi email benar.</p>
-  <label for="sr-name">Nama lengkap</label><input id="sr-name" autocomplete="name">
-  <label for="sr-id">NIP / ID petugas</label><input id="sr-id">
-  <label for="sr-email">Email kampus</label><input id="sr-email" type="email" autocomplete="email">
-  <label for="sr-inv">Kode undangan petugas</label><input id="sr-inv" autocomplete="off">
-  <p class="hint">Minta kode ke koordinator petugas. Demo prototype: TEMU-PETUGAS</p>
-  <label for="sr-pw">Kata sandi (min. 8 karakter)</label><input id="sr-pw" type="password" autocomplete="new-password">
-  <label for="sr-pw2">Ulangi kata sandi</label><input id="sr-pw2" type="password" autocomplete="new-password">
-  <div class="err" id="sr-err" role="alert"></div>
-  <button class="btn full" id="sr-submit">Daftar dan kirim kode</button>
-  <button class="btn ghost full" data-go="slogin">Sudah punya akun? Masuk</button>
-</section>
-
-<section class="view" id="v-sverify">
-  <h1>Verifikasi email</h1>
-  <div class="banner" id="sv-info"></div>
-  <label for="sv-code">Kode 6 digit</label><input id="sv-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code">
-  <div class="err" id="sv-err" role="alert"></div>
-  <button class="btn full" id="sv-submit">Verifikasi</button>
-  <button class="btn ghost full" id="sv-resend">Kirim ulang kode</button>
-</section>
-
-<section class="view" id="v-staff">
-  <h1>Panel petugas</h1>
-  <p class="mute">Terima barang titipan dan perbarui statusnya.</p><p class="hint" id="staffWho"></p>
-  <div style="overflow-x:auto"><table><thead><tr><th>Barang</th><th>Lokasi</th><th>Status</th><th></th></tr></thead><tbody id="staffRows"></tbody></table></div>
-  <button class="btn ghost full" id="logoutBtn">Keluar dari akun petugas</button>
-</section>
+  <!-- LOGIN / REGISTER -->
+  <section id="sec-auth" class="section">
+    <div class="form-card">
+      <h2 id="authTitle" style="margin-bottom:0.5rem;">Masuk ke Akun TEMU</h2>
+      <p style="font-size:0.88rem;color:var(--muted);margin-bottom:1rem;">
+        Akun demo bawaan: <b>admin@temu.id</b> (password: <b>admin123</b>) atau daftar akun baru.
+      </p>
+      <form onsubmit="handleAuth(event)">
+        <div class="form-group" id="nameGroup" style="display:none;">
+          <label>Nama Lengkap</label>
+          <input type="text" id="authName" placeholder="Nama kamu" />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="authEmail" placeholder="nama@email.com" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="authPassword" placeholder="Minimal 6 karakter" required />
+        </div>
+        <button type="submit" class="btn-primary" id="authSubmitBtn" style="width:100%;">Masuk</button>
+      </form>
+      <p style="margin-top:1rem;text-align:center;font-size:0.9rem;">
+        <a href="#" onclick="toggleAuthMode(event)" id="authSwitchText">Belum punya akun? Daftar di sini</a>
+      </p>
+    </div>
+  </section>
 </main>
+
+<!-- MODAL DETAIL & KLAIM -->
+<div class="modal-backdrop" id="detailModal">
+  <div class="modal" id="modalContent"></div>
 </div>
 
-<nav aria-label="Navigasi utama">
-  <a href="#home" data-n="home"><span>🏠</span>Beranda</a>
-  <a href="#lost" data-n="lost"><span>🔎</span>Kehilangan</a>
-  <a href="#found" data-n="found"><span>📦</span>Temuan</a>
-  <a href="#status" data-n="status"><span>🕘</span>Status</a>
-</nav>
+<footer>
+  &copy; 2026 TEMU — Sistem Informasi Barang Hilang & Ditemukan (Versi Statis GitHub Pages)
+</footer>
 
 <script>
-var CATS=["Dompet","Tumbler","Kartu mahasiswa","Charger","Jaket","Buku","Kunci","Lainnya"];
-var ICON={"Dompet":"👛","Tumbler":"🥤","Kartu mahasiswa":"🪪","Charger":"🔌","Jaket":"🧥","Buku":"📘","Kunci":"🔑","Lainnya":"🎒"};
-var COLS=["Hitam","Putih","Cokelat","Biru","Merah","Hijau","Abu-abu","Lainnya"];
-var LOCS=["Perpustakaan","Kantin","Gedung Kuliah A","Gedung Kuliah B","Masjid kampus","Area parkir","Lab komputer","Lainnya"];
-var STEPS=["Dilaporkan","Dicocokkan","Diverifikasi","Dikembalikan"];
-var items=[
- {id:1,cat:"Dompet",col:"Cokelat",loc:"Perpustakaan",time:"Hari ini, 10.20",desc:"dompet kulit ada stiker kecil di dalam",q:"Apa warna stiker di dalam dompet?",a:"kuning",status:0},
- {id:2,cat:"Tumbler",col:"Biru",loc:"Kantin",time:"Kemarin, 13.05",desc:"tumbler biru ada penyok di bawah",q:"Bagian mana yang penyok?",a:"bawah",status:0},
- {id:3,cat:"Kartu mahasiswa",col:"Putih",loc:"Gedung Kuliah A",time:"Kemarin, 09.40",desc:"kartu mahasiswa angkatan 2024",q:"Sebutkan angkatan pada kartu.",a:"2024",status:0},
- {id:4,cat:"Charger",col:"Hitam",loc:"Lab komputer",time:"2 hari lalu",desc:"charger laptop kabel dilakban",q:"Warna lakban pada kabel?",a:"putih",status:0},
- {id:5,cat:"Jaket",col:"Hitam",loc:"Area parkir",time:"3 hari lalu",desc:"jaket hitam logo himpunan",q:"Logo apa di lengan kiri?",a:"himpunan",status:0}
-];
-var state={lost:null,sel:null,mine:null,filter:"Semua",role:"user"};
-var $=function(s){return document.querySelector(s)};
-function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]})}
-function same(a,b){return String(a).trim().toLowerCase()==String(b).trim().toLowerCase()}
-var accounts=[{id:"PTG-001",name:"Petugas Demo",email:"petugas@kampus.test",pw:"petugas123",ok:true}];
-var INVITE="TEMU-PETUGAS",pending=null,fails=0,lockUntil=0;state.staff=null;
-function findAcc(x){x=x.trim().toLowerCase();return accounts.filter(function(a){return a.id.toLowerCase()==x||a.email.toLowerCase()==x})[0]}
-function sendCode(a){a.code=String(Math.floor(100000+Math.random()*900000))}
-function setRole(){$("#roleBtn").textContent="Peran: "+(state.role=="staff"?"Petugas":"Pengguna")}
-function logout(){state.staff=null;state.role="user";setRole();go("home");toast("Kamu sudah keluar dari tampilan petugas")}
-function renderVerify(){$("#sv-info").textContent="Kode 6 digit dikirim ke "+pending.email+". (Demo prototype: kodenya "+pending.code+")"}
-function opts(sel,arr){$(sel).innerHTML=arr.map(function(x){return "<option>"+x+"</option>"}).join("")}
-["l","f"].forEach(function(p){opts("#"+p+"-cat",CATS);opts("#"+p+"-col",COLS);opts("#"+p+"-loc",LOCS)});
-["l","f"].forEach(function(p){
-  ["cat","col","loc"].forEach(function(field){
-    $("#"+p+"-"+field).addEventListener("change",function(){
-      var o=$("#"+p+"-"+field+"-other");
-      if(!o)return;
-      o.hidden=this.value!="Lainnya";
-      if(!o.hidden)o.focus();
-    });
-  });
-});
-function customVal(p,field){
-  var v=$("#"+p+"-"+field).value;
-  if(v!="Lainnya")return v;
-  var input=$("#"+p+"-"+field+"-other");
-  var t=input?input.value.trim():"";
-  return t?t.charAt(0).toUpperCase()+t.slice(1):"";
-}
-function catVal(p){return customVal(p,"cat")}
-function colVal(p){return customVal(p,"col")}
-function locVal(p){return customVal(p,"loc")}
+  const DEFAULT_IMG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='350'><rect width='100%' height='100%' fill='%23e2e8f0'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%2364748b' font-family='sans-serif' font-size='22'>Tidak Ada Foto</text></svg>";
 
-function itemCard(it,extra){
- return '<div class="item"><div class="ico" aria-hidden="true">'+(ICON[it.cat]||"🎒")+'</div><div style="flex:1"><h3>'+esc(it.cat)+' '+esc(it.col.toLowerCase())+'</h3><div class="meta">'+esc(it.loc)+' · '+esc(it.time)+'</div><div><span class="tag '+(it.status==3?"ok":"")+'">'+STEPS[it.status]+'</span></div>'+(extra||"")+'</div></div>';
-}
-function renderHome(){
- var chips=["Semua"].concat(CATS.slice(0,6));
- $("#homeChips").innerHTML=chips.map(function(c){return '<button class="chip" aria-pressed="'+(state.filter==c)+'" data-f="'+c+'">'+c+'</button>'}).join("");
- var q=$("#q").value.toLowerCase();
- var list=items.filter(function(i){return i.status<3&&(state.filter=="Semua"||i.cat==state.filter)&&(i.cat+" "+i.desc+" "+i.col).toLowerCase().indexOf(q)>-1});
- $("#homeList").innerHTML=list.length?list.map(function(i){return itemCard(i)}).join(""):'<div class="banner">Belum ada barang yang cocok. Laporkan kehilanganmu agar kami beri tahu saat ada temuan baru.</div>';
-}
-function score(lost,it){
- var s=0,why=[];
- if(same(lost.cat,it.cat)){s+=50;why.push("Jenis sama")}
- if(same(lost.col,it.col)){s+=20;why.push("Warna sama")}
- if(same(lost.loc,it.loc)){s+=20;why.push("Lokasi sama")}
- var w=lost.desc.toLowerCase().split(/\W+/).filter(function(x){return x.length>3});
- var hit=w.filter(function(x){return it.desc.toLowerCase().indexOf(x)>-1});
- if(hit.length){s+=10;why.push("Ciri mirip")}
- return {s:s,why:why};
-}
-function renderMatches(){
- var L=state.lost;
- var r=items.filter(function(i){return i.status<3}).map(function(i){var m=score(L,i);return {it:i,s:m.s,why:m.why}}).filter(function(x){return x.s>=50}).sort(function(a,b){return b.s-a.s});
- $("#m-sum").textContent=r.length?"Ditemukan "+r.length+" kemungkinan untuk "+L.cat.toLowerCase()+" "+L.col.toLowerCase()+" yang hilang di "+L.loc+". Laporanmu aktif dan kami akan memberi tahu bila ada temuan baru.":"Belum ada kecocokan. Laporanmu tetap aktif dan kami akan memberi tahu bila ada temuan baru yang sesuai.";
- $("#m-list").innerHTML=r.map(function(x){
-  return '<div class="item"><div class="ico" aria-hidden="true">'+(ICON[x.it.cat]||"🎒")+'</div><div style="flex:1"><h3>'+esc(x.it.cat)+' '+esc(x.it.col.toLowerCase())+'</h3><div class="meta">'+esc(x.it.loc)+' · '+esc(x.it.time)+'</div><div class="why">'+x.why.map(function(w){return '<span class="tag ok">'+w+'</span>'}).join("")+'</div><button class="btn full" data-claim="'+x.it.id+'" style="margin-top:12px;padding:10px">Ini barang saya</button></div><div class="score"><b>'+x.s+'%</b><span class="meta">cocok</span></div></div>';
- }).join("");
-}
-function toast(t){var e=document.createElement("div");e.className="toast";e.setAttribute("role","status");e.textContent=t;document.body.appendChild(e);setTimeout(function(){e.remove()},2600)}
-function go(v){location.hash=v}
-function renderStatus(){
- var it=state.mine;
- if(!it){$("#st-item").innerHTML='<div class="banner">Belum ada proses pengembalian. Laporkan kehilangan atau temuan untuk mulai.</div>';$("#st-steps").innerHTML="";$("#st-info").style.display="none";return}
- $("#st-info").style.display="";
- $("#st-item").innerHTML=itemCard(it);
- $("#st-steps").innerHTML=STEPS.map(function(s,i){var c=i<it.status?"done":(i==it.status?"now":"");return '<li class="'+c+'"><span class="dot">'+(i<it.status?"✓":i+1)+'</span><div><b>'+s+'</b><div class="meta">'+["Laporan tercatat di TEMU.","Sistem menemukan kecocokan dengan laporan kehilangan.","Pemilik menjawab pertanyaan verifikasi dengan benar.","Barang diserahkan di pos petugas."][i]+'</div></div></li>'}).join("");
- $("#st-info").textContent=["Menunggu kecocokan.","Lanjutkan dengan verifikasi kepemilikan.","Ambil barang di pos petugas dengan kartu mahasiswa. Petugas akan menandai selesai.","Selesai. Terima kasih sudah saling membantu."][it.status];
-}
-function renderStaff(){
- $("#staffRows").innerHTML=items.map(function(i){
-  var btn=i.status<3?'<button class="chip" data-adv="'+i.id+'">'+(i.status==2?"Tandai dikembalikan":"Majukan status")+'</button>':'<span class="tag ok">Selesai</span>';
-  return '<tr><td>'+esc(i.cat)+' '+esc(i.col.toLowerCase())+'</td><td>'+esc(i.loc)+'</td><td>'+STEPS[i.status]+'</td><td>'+btn+'</td></tr>';
- }).join("");
-}
-function route(){
- var v=(location.hash||"#home").slice(1);
- if(["home","lost","found","matches","verify","status","staff","slogin","sreg","sverify"].indexOf(v)<0)v="home";
- if(v=="matches"&&!state.lost)v="lost";
- if(v=="verify"&&!state.sel)v="home";
- if(v=="staff"&&!state.staff)v="slogin";
- if((v=="slogin"||v=="sreg")&&state.staff)v="staff";
- if(v=="sverify"&&!pending)v="slogin";
- document.querySelectorAll(".view").forEach(function(e){e.classList.toggle("on",e.id=="v-"+v)});
- document.querySelectorAll("nav a").forEach(function(a){if(a.dataset.n==v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
- if(v=="home")renderHome();if(v=="matches")renderMatches();if(v=="status")renderStatus();if(v=="staff")renderStaff();
- if(v=="verify"){$("#vf-item").innerHTML=itemCard(state.sel);$("#vf-q").textContent=state.sel.q;$("#vf-ans").value="";$("#vf-err").textContent=""}
- if(v=="staff")$("#staffWho").textContent="Masuk sebagai "+state.staff.name+" ("+state.staff.id+")";
- if(v=="sverify"){renderVerify();$("#sv-code").value="";$("#sv-err").textContent=""}
- if(v=="slogin")$("#sl-pw").value="";
- window.scrollTo(0,0);
-}
-document.addEventListener("click",function(e){
- var t=e.target.closest("[data-go],[data-f],[data-claim],[data-adv]");if(!t)return;
- if(t.dataset.go)go(t.dataset.go);
- if(t.dataset.f){state.filter=t.dataset.f;renderHome()}
- if(t.dataset.claim){state.sel=items.filter(function(i){return i.id==t.dataset.claim})[0];go("verify")}
- if(t.dataset.adv){var it=items.filter(function(i){return i.id==t.dataset.adv})[0];if(it.status<3)it.status++;renderStaff();toast("Status diperbarui: "+STEPS[it.status])}
-});
-$("#q").addEventListener("input",renderHome);
-$("#l-submit").onclick=function(){
- var err=$("#l-err");err.textContent="";
- if(!catVal("l")){err.textContent="Tulis jenis barang pada kolom yang muncul.";$("#l-cat-other").focus();return}
- if(!colVal("l")){err.textContent="Tulis warna barang pada kolom yang muncul.";$("#l-col-other").focus();return}
- if(!locVal("l")){err.textContent="Tulis lokasi terakhir pada kolom yang muncul.";$("#l-loc-other").focus();return}
- if(!$("#l-time").value){err.textContent="Pilih perkiraan waktu hilang agar pencarian lebih akurat.";$("#l-time").focus();return}
- state.lost={cat:catVal("l"),col:colVal("l"),loc:locVal("l"),desc:$("#l-desc").value};
- toast("Laporan kehilangan tersimpan");go("matches");
-};
-$("#f-submit").onclick=function(){
- var err=$("#f-err"),q=$("#f-q").value.trim(),a=$("#f-a").value.trim();err.textContent="";
- if(!catVal("f")){err.textContent="Tulis jenis barang pada kolom yang muncul.";$("#f-cat-other").focus();return}
- if(!colVal("f")){err.textContent="Tulis warna barang pada kolom yang muncul.";$("#f-col-other").focus();return}
- if(!locVal("f")){err.textContent="Tulis lokasi ditemukan pada kolom yang muncul.";$("#f-loc-other").focus();return}
- if(!q||!a){err.textContent="Isi pertanyaan verifikasi dan jawabannya agar barang aman dari klaim palsu.";return}
- var it={id:Date.now(),cat:catVal("f"),col:colVal("f"),loc:locVal("f"),time:"Baru saja",desc:$("#f-desc").value,q:q,a:a.toLowerCase(),status:0};
- items.unshift(it);state.mine=it;toast("Laporan temuan terkirim. Titipkan barang ke pos petugas.");go("status");
-};
-$("#vf-submit").onclick=function(){
- var v=$("#vf-ans").value.trim().toLowerCase();
- if(!v){$("#vf-err").textContent="Isi jawaban dulu.";return}
- if(v.indexOf(state.sel.a)<0){$("#vf-err").textContent="Jawaban belum sesuai. Periksa lagi ciri barangmu lalu coba kembali.";return}
- state.sel.status=Math.max(state.sel.status,2);state.mine=state.sel;toast("Verifikasi berhasil");go("status");
-};
-$("#roleBtn").onclick=function(){if(state.role=="staff")logout();else go("slogin")};
-$("#logoutBtn").onclick=logout;
-$("#sl-submit").onclick=function(){
- var err=$("#sl-err"),wait=Math.ceil((lockUntil-Date.now())/1000);err.textContent="";
- if(wait>0){err.textContent="Terlalu banyak percobaan. Coba lagi dalam "+wait+" detik.";return}
- var a=findAcc($("#sl-id").value);
- if(!a||a.pw!=$("#sl-pw").value){fails++;if(fails>=3){fails=0;lockUntil=Date.now()+30000;err.textContent="Terlalu banyak percobaan. Coba lagi dalam 30 detik."}else err.textContent="NIP atau kata sandi salah.";return}
- fails=0;
- if(!a.ok){pending=a;sendCode(a);go("sverify");return}
- state.staff=a;state.role="staff";setRole();$("#sl-pw").value="";go("staff");toast("Selamat datang, "+a.name);
-};
-$("#sr-submit").onclick=function(){
- var err=$("#sr-err"),n=$("#sr-name").value.trim(),i=$("#sr-id").value.trim(),e=$("#sr-email").value.trim(),c=$("#sr-inv").value.trim(),p=$("#sr-pw").value,p2=$("#sr-pw2").value;err.textContent="";
- if(!n||!i||!e||!c||!p){err.textContent="Lengkapi semua kolom.";return}
- if(c!=INVITE){err.textContent="Kode undangan salah. Minta kode ke koordinator petugas.";$("#sr-inv").focus();return}
- if(!/^\S+@\S+\.\S+$/.test(e)){err.textContent="Format email belum benar.";$("#sr-email").focus();return}
- if(findAcc(i)||findAcc(e)){err.textContent="NIP atau email sudah terdaftar. Silakan masuk.";return}
- if(p.length<8){err.textContent="Kata sandi minimal 8 karakter.";$("#sr-pw").focus();return}
- if(p!=p2){err.textContent="Kata sandi dan ulangannya belum sama.";$("#sr-pw2").focus();return}
- pending={id:i,name:n,email:e,pw:p,ok:false};accounts.push(pending);sendCode(pending);
- ["sr-name","sr-id","sr-email","sr-inv","sr-pw","sr-pw2"].forEach(function(x){$("#"+x).value=""});go("sverify");
-};
-$("#sv-submit").onclick=function(){
- if($("#sv-code").value.trim()!=pending.code){$("#sv-err").textContent="Kode belum sesuai. Periksa lagi atau kirim ulang kode.";return}
- pending.ok=true;delete pending.code;pending=null;go("slogin");toast("Akun terverifikasi. Silakan masuk.");
-};
-$("#sv-resend").onclick=function(){sendCode(pending);renderVerify();toast("Kode baru dikirim")};
-window.addEventListener("hashchange",route);route();
+  // Inisialisasi Data Bawaan di LocalStorage
+  function initData() {
+    if (!localStorage.getItem('temu_users')) {
+      localStorage.setItem('temu_users', JSON.stringify([
+        { id: 1, name: 'Administrator', email: 'admin@temu.id', password: 'admin123', role: 'admin' },
+        { id: 2, name: 'Mahasiswa Demo', email: 'user@temu.id', password: 'user123', role: 'user' }
+      ]));
+    }
+    if (!localStorage.getItem('temu_items')) {
+      localStorage.setItem('temu_items', JSON.stringify([
+        {
+          id: 101,
+          type: 'ditemukan',
+          title: 'Flashdisk SanDisk 32GB Hitam',
+          location: 'Lab Komputer 1',
+          date: '2026-11-24',
+          contact: '0812-3456-7890',
+          desc: 'Ditemukan tertinggal di meja nomor 12 setelah jam praktikum sore. Ada gantungan tali biru.',
+          photo: DEFAULT_IMG,
+          status: 'aktif',
+          ownerEmail: 'admin@temu.id',
+          ownerName: 'Administrator',
+          claims: []
+        },
+        {
+          id: 102,
+          type: 'hilang',
+          title: 'Tumbler Corkcicle Putih',
+          location: 'Perpustakaan Pusat Lt. 2',
+          date: '2026-11-25',
+          contact: '0857-0000-1111',
+          desc: 'Tertinggal di area meja baca dekat jendela. Terdapat stiker kecil di bagian bawah.',
+          photo: DEFAULT_IMG,
+          status: 'aktif',
+          ownerEmail: 'user@temu.id',
+          ownerName: 'Mahasiswa Demo',
+          claims: []
+        }
+      ]));
+    }
+  }
+
+  let isRegisterMode = false;
+
+  function getCurrentUser() {
+    return JSON.parse(localStorage.getItem('temu_current_user') || 'null');
+  }
+
+  function getItems() {
+    return JSON.parse(localStorage.getItem('temu_items') || '[]');
+  }
+
+  function saveItems(items) {
+    localStorage.setItem('temu_items', JSON.stringify(items));
+  }
+
+  // Navigasi
+  function renderNav() {
+    const user = getCurrentUser();
+    const nav = document.getElementById('navLinks');
+    let html = `<button class="nav-btn" onclick="showSection('home')">Beranda</button>`;
+    if (user) {
+      html += `<button class="nav-btn" onclick="showSection('create')">+ Lapor Barang</button>`;
+      html += `<button class="nav-btn" onclick="showSection('my')">Laporan Saya</button>`;
+      if (user.role === 'admin') {
+        html += `<button class="nav-btn" onclick="showSection('admin')">Admin</button>`;
+      }
+      html += `<span style="font-size:0.85rem;color:var(--muted);margin:0 0.3rem;">Halo, <b>${user.name}</b></span>`;
+      html += `<button class="btn-outline" onclick="logout()">Keluar</button>`;
+    } else {
+      html += `<button class="btn-primary" onclick="showSection('auth')">Masuk / Daftar</button>`;
+    }
+    nav.innerHTML = html;
+  }
+
+  function showSection(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById('sec-' + name).classList.add('active');
+    if (name === 'home') renderItems();
+    if (name === 'my') renderMyItems();
+    if (name === 'admin') renderAdmin();
+  }
+
+  function goCreate() {
+    if (!getCurrentUser()) {
+      alert('Silakan masuk terlebih dahulu untuk membuat laporan.');
+      showSection('auth');
+      return;
+    }
+    showSection('create');
+  }
+
+  // Render Daftar Barang
+  function renderItems() {
+    const items = getItems();
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const typeF = document.getElementById('typeFilter').value;
+    const statusF = document.getElementById('statusFilter').value;
+
+    const filtered = items.filter(item => {
+      const matchText = item.title.toLowerCase().includes(q) ||
+                        item.location.toLowerCase().includes(q) ||
+                        item.desc.toLowerCase().includes(q);
+      const matchType = typeF === 'all' || item.type === typeF;
+      const matchStatus = statusF === 'all' || item.status === statusF;
+      return matchText && matchType && matchStatus;
+    });
+
+    const grid = document.getElementById('itemsGrid');
+    if (filtered.length === 0) {
+      grid.innerHTML = `<p style="color:var(--muted);">Belum ada laporan barang yang sesuai filter.</p>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(item => `
+      <div class="card">
+        <img src="${item.photo || DEFAULT_IMG}" alt="${item.title}" />
+        <div class="card-body">
+          <div>
+            <span class="badge ${item.status === 'selesai' ? 'badge-selesai' : (item.type === 'hilang' ? 'badge-hilang' : 'badge-ditemukan')}">
+              ${item.status === 'selesai' ? 'Selesai' : (item.type === 'hilang' ? 'Hilang' : 'Ditemukan')}
+            </span>
+            <div class="card-title">${item.title}</div>
+            <div class="card-meta">📍 ${item.location} &bull; 📅 ${item.date}</div>
+          </div>
+          <button class="btn-outline" style="width:100%;" onclick="openDetail(${item.id})">Lihat Detail & Klaim</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Detail & Klaim
+  function openDetail(id) {
+    const item = getItems().find(i => i.id === id);
+    if (!item) return;
+
+    const modal = document.getElementById('modalContent');
+    modal.innerHTML = `
+      <img src="${item.photo || DEFAULT_IMG}" alt="${item.title}" />
+      <span class="badge ${item.type === 'hilang' ? 'badge-hilang' : 'badge-ditemukan'}">${item.type.toUpperCase()}</span>
+      <h2 style="margin:0.4rem 0;">${item.title}</h2>
+      <p style="font-size:0.9rem;color:var(--muted);margin-bottom:0.8rem;">
+        Lokasi: <b>${item.location}</b> | Tanggal: <b>${item.date}</b> | Pelapor: <b>${item.ownerName}</b>
+      </p>
+      <p style="margin-bottom:1rem;">${item.desc}</p>
+      <div class="alert">Kontak Pelapor: <b>${item.contact}</b></div>
+
+      ${item.status === 'aktif' ? `
+        <hr style="margin:1rem 0;border:none;border-top:1px solid var(--border);" />
+        <h4 style="margin-bottom:0.5rem;">Ajukan Klaim / Konfirmasi Barang</h4>
+        <form onsubmit="submitClaim(event, ${item.id})">
+          <div class="form-group">
+            <input type="text" id="claimName" placeholder="Nama lengkap pengklaim" required />
+          </div>
+          <div class="form-group">
+            <input type="text" id="claimContact" placeholder="Nomor WhatsApp / Email aktif" required />
+          </div>
+          <div class="form-group">
+            <textarea id="claimProof" placeholder="Sebutkan bukti kepemilikan atau ciri khusus..." required></textarea>
+          </div>
+          <div style="display:flex;gap:0.5rem;">
+            <button type="submit" class="btn-primary">Kirim Klaim</button>
+            <button type="button" class="btn-outline" onclick="closeModal()">Tutup</button>
+          </div>
+        </form>
+      ` : `<button class="btn-outline" onclick="closeModal()">Tutup</button>`}
+    `;
+    document.getElementById('detailModal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('detailModal').classList.remove('open');
+  }
+
+  function submitClaim(e, id) {
+    e.preventDefault();
+    const items = getItems();
+    const idx = items.findIndex(i => i.id === id);
+    if (idx === -1) return;
+
+    items[idx].claims.push({
+      name: document.getElementById('claimName').value,
+      contact: document.getElementById('claimContact').value,
+      proof: document.getElementById('claimProof').value,
+      date: new Date().toLocaleDateString('id-ID')
+    });
+    saveItems(items);
+    alert('Klaim berhasil dikirim! Pelapor atau admin dapat melihat data klaimmu.');
+    closeModal();
+  }
+
+  // Tambah Laporan Baru
+  function handleCreateItem(e) {
+    e.preventDefault();
+    const user = getCurrentUser();
+    if (!user) return;
+
+    const fileInput = document.getElementById('itemPhoto');
+    const saveNew = (photoData) => {
+      const items = getItems();
+      items.unshift({
+        id: Date.now(),
+        type: document.getElementById('itemType').value,
+        title: document.getElementById('itemTitle').value,
+        location: document.getElementById('itemLocation').value,
+        date: document.getElementById('itemDate').value,
+        contact: document.getElementById('itemContact').value,
+        desc: document.getElementById('itemDesc').value,
+        photo: photoData || DEFAULT_IMG,
+        status: 'aktif',
+        ownerEmail: user.email,
+        ownerName: user.name,
+        claims: []
+      });
+      saveItems(items);
+      e.target.reset();
+      alert('Laporan berhasil dipublikasikan!');
+      showSection('home');
+    };
+
+    if (fileInput.files && fileInput.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (ev) => saveNew(ev.target.result);
+      reader.readAsDataURL(fileInput.files[0]);
+    } else {
+      saveNew(DEFAULT_IMG);
+    }
+  }
+
+  // Laporan Saya
+  function renderMyItems() {
+    const user = getCurrentUser();
+    if (!user) return;
+    const myItems = getItems().filter(i => i.ownerEmail === user.email);
+    const grid = document.getElementById('myItemsGrid');
+
+    if (myItems.length === 0) {
+      grid.innerHTML = `<p style="color:var(--muted);">Kamu belum membuat laporan apa pun.</p>`;
+      return;
+    }
+
+    grid.innerHTML = myItems.map(item => `
+      <div class="card">
+        <img src="${item.photo || DEFAULT_IMG}" alt="${item.title}" />
+        <div class="card-body">
+          <div>
+            <span class="badge ${item.status === 'selesai' ? 'badge-selesai' : 'badge-ditemukan'}">${item.status.toUpperCase()}</span>
+            <div class="card-title">${item.title}</div>
+            <div class="card-meta">Klaim masuk: <b>${item.claims.length}</b></div>
+          </div>
+          <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+            ${item.status === 'aktif' ? `<button class="btn-primary" onclick="markDone(${item.id})">Tandai Selesai</button>` : ''}
+            <button class="btn-danger" onclick="deleteItem(${item.id})">Hapus</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function markDone(id) {
+    const items = getItems();
+    const item = items.find(i => i.id === id);
+    if (item) item.status = 'selesai';
+    saveItems(items);
+    renderMyItems();
+    renderAdmin();
+  }
+
+  function deleteItem(id) {
+    if (!confirm('Hapus laporan ini?')) return;
+    const items = getItems().filter(i => i.id !== id);
+    saveItems(items);
+    renderMyItems();
+    renderAdmin();
+  }
+
+  // Panel Admin
+  function renderAdmin() {
+    const items = getItems();
+    const tbody = document.getElementById('adminTableBody');
+    tbody.innerHTML = items.map(item => `
+      <tr>
+        <td><b>${item.title}</b><br><small>${item.location}</small></td>
+        <td>${item.type}</td>
+        <td>${item.ownerName}</td>
+        <td>${item.status}</td>
+        <td>${item.claims.length} klaim</td>
+        <td>
+          ${item.status === 'aktif' ? `<button class="btn-outline" onclick="markDone(${item.id})">Selesaikan</button>` : ''}
+          <button class="btn-danger" onclick="deleteItem(${item.id})">Hapus</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // Auth (Login / Register)
+  function toggleAuthMode(e) {
+    e.preventDefault();
+    isRegisterMode = !isRegisterMode;
+    document.getElementById('authTitle').textContent = isRegisterMode ? 'Daftar Akun Baru' : 'Masuk ke Akun TEMU';
+    document.getElementById('nameGroup').style.display = isRegisterMode ? 'block' : 'none';
+    document.getElementById('authSubmitBtn').textContent = isRegisterMode ? 'Daftar' : 'Masuk';
+    document.getElementById('authSwitchText').textContent = isRegisterMode ? 'Sudah punya akun? Masuk di sini' : 'Belum punya akun? Daftar di sini';
+  }
+
+  function handleAuth(e) {
+    e.preventDefault();
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    const users = JSON.parse(localStorage.getItem('temu_users') || '[]');
+
+    if (isRegisterMode) {
+      const name = document.getElementById('authName').value.trim() || 'Pengguna';
+      if (users.some(u => u.email === email)) {
+        alert('Email sudah terdaftar.');
+        return;
+      }
+      const newUser = { id: Date.now(), name, email, password, role: 'user' };
+      users.push(newUser);
+      localStorage.setItem('temu_users', JSON.stringify(users));
+      localStorage.setItem('temu_current_user', JSON.stringify(newUser));
+      alert('Pendaftaran berhasil!');
+    } else {
+      const found = users.find(u => u.email === email && u.password === password);
+      if (!found) {
+        alert('Email atau password salah.');
+        return;
+      }
+      localStorage.setItem('temu_current_user', JSON.stringify(found));
+    }
+
+    renderNav();
+    showSection('home');
+  }
+
+  function logout() {
+    localStorage.removeItem('temu_current_user');
+    renderNav();
+    showSection('home');
+  }
+
+  // Jalankan saat halaman dimuat
+  initData();
+  renderNav();
+  renderItems();
 </script>
 </body>
 </html>
