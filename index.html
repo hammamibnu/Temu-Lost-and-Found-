@@ -141,10 +141,46 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
   <button class="btn ghost" data-go="home">Kembali ke beranda</button>
 </section>
 
+<section class="view" id="v-slogin">
+  <h1>Masuk petugas</h1>
+  <p class="mute">Tampilan petugas hanya untuk petugas yang sudah terverifikasi.</p>
+  <label for="sl-id">NIP / ID petugas</label><input id="sl-id" autocomplete="username">
+  <label for="sl-pw">Kata sandi</label><input id="sl-pw" type="password" autocomplete="current-password">
+  <div class="err" id="sl-err" role="alert"></div>
+  <button class="btn full" id="sl-submit">Masuk</button>
+  <button class="btn ghost full" data-go="sreg">Belum punya akun? Daftar petugas</button>
+  <p class="hint" style="margin-top:12px">Akun demo prototype: PTG-001 / petugas123</p>
+</section>
+
+<section class="view" id="v-sreg">
+  <h1>Daftar petugas</h1>
+  <p class="mute">Akun baru aktif setelah kode undangan dan kode verifikasi email benar.</p>
+  <label for="sr-name">Nama lengkap</label><input id="sr-name" autocomplete="name">
+  <label for="sr-id">NIP / ID petugas</label><input id="sr-id">
+  <label for="sr-email">Email kampus</label><input id="sr-email" type="email" autocomplete="email">
+  <label for="sr-inv">Kode undangan petugas</label><input id="sr-inv" autocomplete="off">
+  <p class="hint">Minta kode ke koordinator petugas. Demo prototype: TEMU-PETUGAS</p>
+  <label for="sr-pw">Kata sandi (min. 8 karakter)</label><input id="sr-pw" type="password" autocomplete="new-password">
+  <label for="sr-pw2">Ulangi kata sandi</label><input id="sr-pw2" type="password" autocomplete="new-password">
+  <div class="err" id="sr-err" role="alert"></div>
+  <button class="btn full" id="sr-submit">Daftar dan kirim kode</button>
+  <button class="btn ghost full" data-go="slogin">Sudah punya akun? Masuk</button>
+</section>
+
+<section class="view" id="v-sverify">
+  <h1>Verifikasi email</h1>
+  <div class="banner" id="sv-info"></div>
+  <label for="sv-code">Kode 6 digit</label><input id="sv-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code">
+  <div class="err" id="sv-err" role="alert"></div>
+  <button class="btn full" id="sv-submit">Verifikasi</button>
+  <button class="btn ghost full" id="sv-resend">Kirim ulang kode</button>
+</section>
+
 <section class="view" id="v-staff">
   <h1>Panel petugas</h1>
-  <p class="mute">Terima barang titipan dan perbarui statusnya.</p>
+  <p class="mute">Terima barang titipan dan perbarui statusnya.</p><p class="hint" id="staffWho"></p>
   <div style="overflow-x:auto"><table><thead><tr><th>Barang</th><th>Lokasi</th><th>Status</th><th></th></tr></thead><tbody id="staffRows"></tbody></table></div>
+  <button class="btn ghost full" id="logoutBtn">Keluar dari akun petugas</button>
 </section>
 </main>
 </div>
@@ -173,6 +209,13 @@ var state={lost:null,sel:null,mine:null,filter:"Semua",role:"user"};
 var $=function(s){return document.querySelector(s)};
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]})}
 function same(a,b){return String(a).trim().toLowerCase()==String(b).trim().toLowerCase()}
+var accounts=[{id:"PTG-001",name:"Petugas Demo",email:"petugas@kampus.test",pw:"petugas123",ok:true}];
+var INVITE="TEMU-PETUGAS",pending=null,fails=0,lockUntil=0;state.staff=null;
+function findAcc(x){x=x.trim().toLowerCase();return accounts.filter(function(a){return a.id.toLowerCase()==x||a.email.toLowerCase()==x})[0]}
+function sendCode(a){a.code=String(Math.floor(100000+Math.random()*900000))}
+function setRole(){$("#roleBtn").textContent="Peran: "+(state.role=="staff"?"Petugas":"Pengguna")}
+function logout(){state.staff=null;state.role="user";setRole();go("home");toast("Kamu sudah keluar dari tampilan petugas")}
+function renderVerify(){$("#sv-info").textContent="Kode 6 digit dikirim ke "+pending.email+". (Demo prototype: kodenya "+pending.code+")"}
 function opts(sel,arr){$(sel).innerHTML=arr.map(function(x){return "<option>"+x+"</option>"}).join("")}
 ["l","f"].forEach(function(p){opts("#"+p+"-cat",CATS);opts("#"+p+"-col",COLS);opts("#"+p+"-loc",LOCS)});
 ["l","f"].forEach(function(p){
@@ -242,14 +285,19 @@ function renderStaff(){
 }
 function route(){
  var v=(location.hash||"#home").slice(1);
- if(["home","lost","found","matches","verify","status","staff"].indexOf(v)<0)v="home";
+ if(["home","lost","found","matches","verify","status","staff","slogin","sreg","sverify"].indexOf(v)<0)v="home";
  if(v=="matches"&&!state.lost)v="lost";
  if(v=="verify"&&!state.sel)v="home";
- if(v=="staff"&&state.role!="staff")v="home";
+ if(v=="staff"&&!state.staff)v="slogin";
+ if((v=="slogin"||v=="sreg")&&state.staff)v="staff";
+ if(v=="sverify"&&!pending)v="slogin";
  document.querySelectorAll(".view").forEach(function(e){e.classList.toggle("on",e.id=="v-"+v)});
  document.querySelectorAll("nav a").forEach(function(a){if(a.dataset.n==v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
  if(v=="home")renderHome();if(v=="matches")renderMatches();if(v=="status")renderStatus();if(v=="staff")renderStaff();
  if(v=="verify"){$("#vf-item").innerHTML=itemCard(state.sel);$("#vf-q").textContent=state.sel.q;$("#vf-ans").value="";$("#vf-err").textContent=""}
+ if(v=="staff")$("#staffWho").textContent="Masuk sebagai "+state.staff.name+" ("+state.staff.id+")";
+ if(v=="sverify"){renderVerify();$("#sv-code").value="";$("#sv-err").textContent=""}
+ if(v=="slogin")$("#sl-pw").value="";
  window.scrollTo(0,0);
 }
 document.addEventListener("click",function(e){
@@ -284,7 +332,33 @@ $("#vf-submit").onclick=function(){
  if(v.indexOf(state.sel.a)<0){$("#vf-err").textContent="Jawaban belum sesuai. Periksa lagi ciri barangmu lalu coba kembali.";return}
  state.sel.status=Math.max(state.sel.status,2);state.mine=state.sel;toast("Verifikasi berhasil");go("status");
 };
-$("#roleBtn").onclick=function(){state.role=state.role=="user"?"staff":"user";$("#roleBtn").textContent="Peran: "+(state.role=="user"?"Pengguna":"Petugas");if(state.role=="staff")go("staff");else go("home");toast("Beralih ke tampilan "+(state.role=="user"?"pengguna":"petugas"))};
+$("#roleBtn").onclick=function(){if(state.role=="staff")logout();else go("slogin")};
+$("#logoutBtn").onclick=logout;
+$("#sl-submit").onclick=function(){
+ var err=$("#sl-err"),wait=Math.ceil((lockUntil-Date.now())/1000);err.textContent="";
+ if(wait>0){err.textContent="Terlalu banyak percobaan. Coba lagi dalam "+wait+" detik.";return}
+ var a=findAcc($("#sl-id").value);
+ if(!a||a.pw!=$("#sl-pw").value){fails++;if(fails>=3){fails=0;lockUntil=Date.now()+30000;err.textContent="Terlalu banyak percobaan. Coba lagi dalam 30 detik."}else err.textContent="NIP atau kata sandi salah.";return}
+ fails=0;
+ if(!a.ok){pending=a;sendCode(a);go("sverify");return}
+ state.staff=a;state.role="staff";setRole();$("#sl-pw").value="";go("staff");toast("Selamat datang, "+a.name);
+};
+$("#sr-submit").onclick=function(){
+ var err=$("#sr-err"),n=$("#sr-name").value.trim(),i=$("#sr-id").value.trim(),e=$("#sr-email").value.trim(),c=$("#sr-inv").value.trim(),p=$("#sr-pw").value,p2=$("#sr-pw2").value;err.textContent="";
+ if(!n||!i||!e||!c||!p){err.textContent="Lengkapi semua kolom.";return}
+ if(c!=INVITE){err.textContent="Kode undangan salah. Minta kode ke koordinator petugas.";$("#sr-inv").focus();return}
+ if(!/^\S+@\S+\.\S+$/.test(e)){err.textContent="Format email belum benar.";$("#sr-email").focus();return}
+ if(findAcc(i)||findAcc(e)){err.textContent="NIP atau email sudah terdaftar. Silakan masuk.";return}
+ if(p.length<8){err.textContent="Kata sandi minimal 8 karakter.";$("#sr-pw").focus();return}
+ if(p!=p2){err.textContent="Kata sandi dan ulangannya belum sama.";$("#sr-pw2").focus();return}
+ pending={id:i,name:n,email:e,pw:p,ok:false};accounts.push(pending);sendCode(pending);
+ ["sr-name","sr-id","sr-email","sr-inv","sr-pw","sr-pw2"].forEach(function(x){$("#"+x).value=""});go("sverify");
+};
+$("#sv-submit").onclick=function(){
+ if($("#sv-code").value.trim()!=pending.code){$("#sv-err").textContent="Kode belum sesuai. Periksa lagi atau kirim ulang kode.";return}
+ pending.ok=true;delete pending.code;pending=null;go("slogin");toast("Akun terverifikasi. Silakan masuk.");
+};
+$("#sv-resend").onclick=function(){sendCode(pending);renderVerify();toast("Kode baru dikirim")};
 window.addEventListener("hashchange",route);route();
 </script>
 </body>
