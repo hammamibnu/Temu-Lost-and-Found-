@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TEMU: Lost and Found Kampus</title>
+<style>
+:root{color-scheme:light;--bg:#d4e9f8;--card:#f8fcff;--ink:#0f2f47;--mute:#3f6079;--line:#a9cde6;--pri:#0b72b8;--pri-t:#fff;--soft:#bfe0f5;--amb:#ffb81c;--amb-t:#3a2800;--ok:#11692f;--okbg:#cfeedb;--bad:#b42318;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;padding-bottom:84px}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px}
+header{display:flex;align-items:center;justify-content:space-between;padding:16px 0 8px}
+.logo{font-weight:800;font-size:28px;letter-spacing:.5px;color:#075a93;text-decoration:none}
+.logo small{display:block;font-size:12px;font-weight:500;color:var(--mute);letter-spacing:0}
+h1{font-size:28px;line-height:1.2;margin:16px 0 8px}
+h2{font-size:20px;margin:24px 0 8px}
+p{margin:0 0 12px}.mute{color:var(--mute)}
+.intro{position:relative;overflow:hidden;background:linear-gradient(135deg,#0b72b8,#1a8fd0);color:#fff;border-radius:22px;padding:20px 96px 20px 20px;margin:8px 0}.intro h1{margin:0 0 6px;font-size:26px}.intro p{margin:0;opacity:.95}.intro::after{content:"🔎";position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:56px}
+.hero{display:grid;gap:12px;margin:16px 0}
+.big{display:block;text-align:left;border:0;border-radius:18px;padding:20px;font:inherit;cursor:pointer;width:100%}
+.big b{display:block;font-size:20px}.big span{font-size:14px;opacity:.9}
+.big.lost{background:linear-gradient(135deg,#0b72b8,#1a8fd0);color:#fff;box-shadow:0 6px 14px rgba(11,114,184,.3)}
+.big.found{background:linear-gradient(135deg,#ffb81c,#ff9640);color:var(--amb-t);box-shadow:0 6px 14px rgba(255,150,64,.35)}
+.search{display:flex;gap:8px;margin:12px 0}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:12px}
+textarea{min-height:84px;resize:vertical}
+label{display:block;font-weight:600;margin:14px 0 6px}
+.hint{font-size:13px;color:var(--mute);margin-top:4px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--pri);color:var(--pri-t);border-color:var(--pri)}
+.item{background:var(--card);border:1px solid var(--line);box-shadow:0 2px 8px rgba(11,114,184,.12);border-radius:16px;padding:14px;margin:10px 0;display:flex;gap:12px;align-items:flex-start}
+.ico{flex:none;width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#bfe0f5,#ffe3a3);display:grid;place-items:center;font-size:26px}
+.item h3{margin:0;font-size:17px}.meta{font-size:13px;color:var(--mute)}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--soft);color:#075a93;margin-right:6px}
+.tag.ok{background:var(--okbg);color:var(--ok)}
+.btn{display:inline-block;border:0;border-radius:12px;padding:14px 20px;font:inherit;font-weight:700;background:var(--pri);color:var(--pri-t);cursor:pointer;min-height:48px}
+.btn.ghost{background:transparent;color:var(--pri);border:1.5px solid var(--pri)}
+.btn.full{width:100%;margin-top:18px}
+.score{margin-left:auto;text-align:center;flex:none}
+.score b{display:block;font-size:24px;color:var(--ok)}
+.why{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.steps{list-style:none;padding:0;margin:16px 0}
+.steps li{display:flex;gap:14px;padding-bottom:20px;position:relative}
+.steps li::before{content:"";position:absolute;left:13px;top:28px;bottom:0;width:2px;background:var(--line)}
+.steps li:last-child::before{display:none}
+.dot{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--line);background:var(--card);display:grid;place-items:center;font-size:14px;font-weight:700}
+.steps .done .dot{background:var(--ok);border-color:var(--ok);color:#fff}
+.steps .now .dot{border-color:var(--pri);color:var(--pri)}
+.steps .done::before{background:var(--ok)}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:2px solid var(--line);box-shadow:0 -4px 12px rgba(11,114,184,.12);display:flex;justify-content:space-around;padding:6px 0 calc(6px + env(safe-area-inset-bottom,0px));z-index:5}
+nav a{flex:1;text-align:center;font-size:12px;color:var(--mute);text-decoration:none;padding:6px 0;min-height:48px}
+nav a span{display:block;font-size:22px}
+nav a[aria-current="page"]{color:var(--pri);font-weight:700}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-size:14px;z-index:9;max-width:90%}
+.err{color:var(--bad);font-size:13px;margin-top:4px}
+.banner{background:var(--soft);border-left:5px solid var(--pri);border-radius:14px;padding:12px 14px;font-size:14px;margin:12px 0}
+:focus-visible{outline:3px solid var(--amb);outline-offset:2px}
+.view{display:none}.view.on{display:block}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:10px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+@media (min-width:600px){.hero{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:no-preference){.view.on{animation:in .2s ease-out}@keyframes in{from{opacity:.4}to{opacity:1}}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><a class="logo" href="#home">TEMU<small>Lost and Found kampus</small></a><button class="chip" id="roleBtn" aria-label="Ganti peran">Peran: Pengguna</button></header>
+
+<main>
+<section class="view" id="v-home">
+  <div class="intro"><h1>Barang hilang atau menemukan barang?</h1>
+  <p>Laporkan di satu tempat. TEMU mencarikan kecocokannya untuk kamu.</p></div>
+  <div class="hero">
+    <button class="big lost" data-go="lost"><b>Saya kehilangan barang</b><span>Isi ciri barang, kami cocokkan dengan temuan.</span></button>
+    <button class="big found" data-go="found"><b>Saya menemukan barang</b><span>Foto dan laporkan dalam satu menit.</span></button>
+  </div>
+  <h2>Barang temuan terbaru</h2>
+  <div class="search"><input id="q" type="search" placeholder="Cari: dompet, tumbler, kartu…" aria-label="Cari barang temuan"></div>
+  <div class="chips" id="homeChips" role="group" aria-label="Filter kategori"></div>
+  <div id="homeList"></div>
+</section>
+
+<section class="view" id="v-lost">
+  <h1>Laporkan barang hilang</h1>
+  <p class="mute">Semakin lengkap ciri barang, semakin akurat kecocokannya.</p>
+  <label for="l-cat">Jenis barang</label><select id="l-cat"></select>
+  <label for="l-col">Warna</label><select id="l-col"></select>
+  <label for="l-loc">Lokasi terakhir</label><select id="l-loc"></select>
+  <label for="l-time">Waktu hilang</label><input id="l-time" type="datetime-local">
+  <label for="l-desc">Ciri khusus (opsional)</label><textarea id="l-desc" placeholder="Contoh: ada stiker kecil di bagian dalam"></textarea>
+  <label for="l-photo">Foto barang sejenis (opsional)</label><input id="l-photo" type="file" accept="image/*">
+  <p class="hint">Foto belum dipakai pada prototype ini.</p>
+  <div class="err" id="l-err" role="alert"></div>
+  <button class="btn full" id="l-submit">Cari kecocokan</button>
+</section>
+
+<section class="view" id="v-found">
+  <h1>Laporkan barang temuan</h1>
+  <p class="mute">Kamu tidak perlu tahu siapa pemiliknya. Titipkan ke petugas, sisanya kami urus.</p>
+  <label for="f-cat">Jenis barang</label><select id="f-cat"></select>
+  <label for="f-col">Warna</label><select id="f-col"></select>
+  <label for="f-loc">Lokasi ditemukan</label><select id="f-loc"></select>
+  <label for="f-desc">Ciri barang (opsional)</label><textarea id="f-desc" placeholder="Contoh: ada gantungan kunci kucing"></textarea>
+  <label for="f-q">Pertanyaan verifikasi untuk pemilik</label><input id="f-q" placeholder="Contoh: Apa isi di dalam tas?">
+  <p class="hint">Jawabannya hanya diketahui pemilik. Jangan tulis ciri yang terlihat jelas.</p>
+  <label for="f-a">Jawaban yang benar</label><input id="f-a" placeholder="Hanya terlihat oleh petugas">
+  <div class="err" id="f-err" role="alert"></div>
+  <button class="btn full" id="f-submit">Kirim laporan</button>
+</section>
+
+<section class="view" id="v-matches">
+  <h1>Kemungkinan kecocokan</h1>
+  <div class="banner" id="m-sum"></div>
+  <div id="m-list"></div>
+  <button class="btn ghost" data-go="lost">Ubah laporan kehilangan</button>
+</section>
+
+<section class="view" id="v-verify">
+  <h1>Verifikasi kepemilikan</h1>
+  <div id="vf-item"></div>
+  <p class="banner">Jawab pertanyaan di bawah untuk membuktikan ini barangmu. Foto lengkap tidak ditampilkan sebelum verifikasi.</p>
+  <label for="vf-ans" id="vf-q">Pertanyaan</label>
+  <input id="vf-ans" autocomplete="off">
+  <div class="err" id="vf-err" role="alert"></div>
+  <button class="btn full" id="vf-submit">Kirim jawaban</button>
+</section>
+
+<section class="view" id="v-status">
+  <h1>Status pengembalian</h1>
+  <div id="st-item"></div>
+  <ol class="steps" id="st-steps"></ol>
+  <div class="banner" id="st-info"></div>
+  <button class="btn ghost" data-go="home">Kembali ke beranda</button>
+</section>
+
+<section class="view" id="v-staff">
+  <h1>Panel petugas</h1>
+  <p class="mute">Terima barang titipan dan perbarui statusnya.</p>
+  <div style="overflow-x:auto"><table><thead><tr><th>Barang</th><th>Lokasi</th><th>Status</th><th></th></tr></thead><tbody id="staffRows"></tbody></table></div>
+</section>
+</main>
+</div>
+
+<nav aria-label="Navigasi utama">
+  <a href="#home" data-n="home"><span>🏠</span>Beranda</a>
+  <a href="#lost" data-n="lost"><span>🔎</span>Kehilangan</a>
+  <a href="#found" data-n="found"><span>📦</span>Temuan</a>
+  <a href="#status" data-n="status"><span>🕘</span>Status</a>
+</nav>
+
+<script>
+var CATS=["Dompet","Tumbler","Kartu mahasiswa","Charger","Jaket","Buku","Kunci","Lainnya"];
+var ICON={"Dompet":"👛","Tumbler":"🥤","Kartu mahasiswa":"🪪","Charger":"🔌","Jaket":"🧥","Buku":"📘","Kunci":"🔑","Lainnya":"🎒"};
+var COLS=["Hitam","Putih","Cokelat","Biru","Merah","Hijau","Abu-abu"];
+var LOCS=["Perpustakaan","Kantin","Gedung Kuliah A","Gedung Kuliah B","Masjid kampus","Area parkir","Lab komputer"];
+var STEPS=["Dilaporkan","Dicocokkan","Diverifikasi","Dikembalikan"];
+var items=[
+ {id:1,cat:"Dompet",col:"Cokelat",loc:"Perpustakaan",time:"Hari ini, 10.20",desc:"dompet kulit ada stiker kecil di dalam",q:"Apa warna stiker di dalam dompet?",a:"kuning",status:0},
+ {id:2,cat:"Tumbler",col:"Biru",loc:"Kantin",time:"Kemarin, 13.05",desc:"tumbler biru ada penyok di bawah",q:"Bagian mana yang penyok?",a:"bawah",status:0},
+ {id:3,cat:"Kartu mahasiswa",col:"Putih",loc:"Gedung Kuliah A",time:"Kemarin, 09.40",desc:"kartu mahasiswa angkatan 2024",q:"Sebutkan angkatan pada kartu.",a:"2024",status:0},
+ {id:4,cat:"Charger",col:"Hitam",loc:"Lab komputer",time:"2 hari lalu",desc:"charger laptop kabel dilakban",q:"Warna lakban pada kabel?",a:"putih",status:0},
+ {id:5,cat:"Jaket",col:"Hitam",loc:"Area parkir",time:"3 hari lalu",desc:"jaket hitam logo himpunan",q:"Logo apa di lengan kiri?",a:"himpunan",status:0}
+];
+var state={lost:null,sel:null,mine:null,filter:"Semua",role:"user"};
+var $=function(s){return document.querySelector(s)};
+function opts(sel,arr){$(sel).innerHTML=arr.map(function(x){return "<option>"+x+"</option>"}).join("")}
+["l","f"].forEach(function(p){opts("#"+p+"-cat",CATS);opts("#"+p+"-col",COLS);opts("#"+p+"-loc",LOCS)});
+
+function itemCard(it,extra){
+ return '<div class="item"><div class="ico" aria-hidden="true">'+(ICON[it.cat]||"🎒")+'</div><div style="flex:1"><h3>'+it.cat+' '+it.col.toLowerCase()+'</h3><div class="meta">'+it.loc+' · '+it.time+'</div><div><span class="tag '+(it.status==3?"ok":"")+'">'+STEPS[it.status]+'</span></div>'+(extra||"")+'</div></div>';
+}
+function renderHome(){
+ var chips=["Semua"].concat(CATS.slice(0,6));
+ $("#homeChips").innerHTML=chips.map(function(c){return '<button class="chip" aria-pressed="'+(state.filter==c)+'" data-f="'+c+'">'+c+'</button>'}).join("");
+ var q=$("#q").value.toLowerCase();
+ var list=items.filter(function(i){return i.status<3&&(state.filter=="Semua"||i.cat==state.filter)&&(i.cat+" "+i.desc+" "+i.col).toLowerCase().indexOf(q)>-1});
+ $("#homeList").innerHTML=list.length?list.map(function(i){return itemCard(i)}).join(""):'<div class="banner">Belum ada barang yang cocok. Laporkan kehilanganmu agar kami beri tahu saat ada temuan baru.</div>';
+}
+function score(lost,it){
+ var s=0,why=[];
+ if(lost.cat==it.cat){s+=50;why.push("Jenis sama")}
+ if(lost.col==it.col){s+=20;why.push("Warna sama")}
+ if(lost.loc==it.loc){s+=20;why.push("Lokasi sama")}
+ var w=lost.desc.toLowerCase().split(/\W+/).filter(function(x){return x.length>3});
+ var hit=w.filter(function(x){return it.desc.toLowerCase().indexOf(x)>-1});
+ if(hit.length){s+=10;why.push("Ciri mirip")}
+ return {s:s,why:why};
+}
+function renderMatches(){
+ var L=state.lost;
+ var r=items.filter(function(i){return i.status<3}).map(function(i){var m=score(L,i);return {it:i,s:m.s,why:m.why}}).filter(function(x){return x.s>=50}).sort(function(a,b){return b.s-a.s});
+ $("#m-sum").textContent=r.length?"Ditemukan "+r.length+" kemungkinan untuk "+L.cat.toLowerCase()+" "+L.col.toLowerCase()+" yang hilang di "+L.loc+". Laporanmu aktif dan kami akan memberi tahu bila ada temuan baru.":"Belum ada kecocokan. Laporanmu tetap aktif dan kami akan memberi tahu bila ada temuan baru yang sesuai.";
+ $("#m-list").innerHTML=r.map(function(x){
+  return '<div class="item"><div class="ico" aria-hidden="true">'+ICON[x.it.cat]+'</div><div style="flex:1"><h3>'+x.it.cat+' '+x.it.col.toLowerCase()+'</h3><div class="meta">'+x.it.loc+' · '+x.it.time+'</div><div class="why">'+x.why.map(function(w){return '<span class="tag ok">'+w+'</span>'}).join("")+'</div><button class="btn full" data-claim="'+x.it.id+'" style="margin-top:12px;padding:10px">Ini barang saya</button></div><div class="score"><b>'+x.s+'%</b><span class="meta">cocok</span></div></div>';
+ }).join("");
+}
+function toast(t){var e=document.createElement("div");e.className="toast";e.setAttribute("role","status");e.textContent=t;document.body.appendChild(e);setTimeout(function(){e.remove()},2600)}
+function go(v){location.hash=v}
+function renderStatus(){
+ var it=state.mine;
+ if(!it){$("#st-item").innerHTML='<div class="banner">Belum ada proses pengembalian. Laporkan kehilangan atau temuan untuk mulai.</div>';$("#st-steps").innerHTML="";$("#st-info").style.display="none";return}
+ $("#st-info").style.display="";
+ $("#st-item").innerHTML=itemCard(it);
+ $("#st-steps").innerHTML=STEPS.map(function(s,i){var c=i<it.status?"done":(i==it.status?"now":"");return '<li class="'+c+'"><span class="dot">'+(i<it.status?"✓":i+1)+'</span><div><b>'+s+'</b><div class="meta">'+["Laporan tercatat di TEMU.","Sistem menemukan kecocokan dengan laporan kehilangan.","Pemilik menjawab pertanyaan verifikasi dengan benar.","Barang diserahkan di pos petugas."][i]+'</div></div></li>'}).join("");
+ $("#st-info").textContent=["Menunggu kecocokan.","Lanjutkan dengan verifikasi kepemilikan.","Ambil barang di pos petugas dengan kartu mahasiswa. Petugas akan menandai selesai.","Selesai. Terima kasih sudah saling membantu."][it.status];
+}
+function renderStaff(){
+ $("#staffRows").innerHTML=items.map(function(i){
+  var btn=i.status<3?'<button class="chip" data-adv="'+i.id+'">'+(i.status==2?"Tandai dikembalikan":"Majukan status")+'</button>':'<span class="tag ok">Selesai</span>';
+  return '<tr><td>'+i.cat+' '+i.col.toLowerCase()+'</td><td>'+i.loc+'</td><td>'+STEPS[i.status]+'</td><td>'+btn+'</td></tr>';
+ }).join("");
+}
+function route(){
+ var v=(location.hash||"#home").slice(1);
+ if(["home","lost","found","matches","verify","status","staff"].indexOf(v)<0)v="home";
+ if(v=="matches"&&!state.lost)v="lost";
+ if(v=="verify"&&!state.sel)v="home";
+ if(v=="staff"&&state.role!="staff")v="home";
+ document.querySelectorAll(".view").forEach(function(e){e.classList.toggle("on",e.id=="v-"+v)});
+ document.querySelectorAll("nav a").forEach(function(a){if(a.dataset.n==v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
+ if(v=="home")renderHome();if(v=="matches")renderMatches();if(v=="status")renderStatus();if(v=="staff")renderStaff();
+ if(v=="verify"){$("#vf-item").innerHTML=itemCard(state.sel);$("#vf-q").textContent=state.sel.q;$("#vf-ans").value="";$("#vf-err").textContent=""}
+ window.scrollTo(0,0);
+}
+document.addEventListener("click",function(e){
+ var t=e.target.closest("[data-go],[data-f],[data-claim],[data-adv]");if(!t)return;
+ if(t.dataset.go)go(t.dataset.go);
+ if(t.dataset.f){state.filter=t.dataset.f;renderHome()}
+ if(t.dataset.claim){state.sel=items.filter(function(i){return i.id==t.dataset.claim})[0];go("verify")}
+ if(t.dataset.adv){var it=items.filter(function(i){return i.id==t.dataset.adv})[0];if(it.status<3)it.status++;renderStaff();toast("Status diperbarui: "+STEPS[it.status])}
+});
+$("#q").addEventListener("input",renderHome);
+$("#l-submit").onclick=function(){
+ if(!$("#l-time").value){$("#l-err").textContent="Pilih perkiraan waktu hilang agar pencarian lebih akurat.";$("#l-time").focus();return}
+ $("#l-err").textContent="";
+ state.lost={cat:$("#l-cat").value,col:$("#l-col").value,loc:$("#l-loc").value,desc:$("#l-desc").value};
+ toast("Laporan kehilangan tersimpan");go("matches");
+};
+$("#f-submit").onclick=function(){
+ var q=$("#f-q").value.trim(),a=$("#f-a").value.trim();
+ if(!q||!a){$("#f-err").textContent="Isi pertanyaan verifikasi dan jawabannya agar barang aman dari klaim palsu.";return}
+ $("#f-err").textContent="";
+ var it={id:Date.now(),cat:$("#f-cat").value,col:$("#f-col").value,loc:$("#f-loc").value,time:"Baru saja",desc:$("#f-desc").value,q:q,a:a.toLowerCase(),status:0};
+ items.unshift(it);state.mine=it;toast("Laporan temuan terkirim. Titipkan barang ke pos petugas.");go("status");
+};
+$("#vf-submit").onclick=function(){
+ var v=$("#vf-ans").value.trim().toLowerCase();
+ if(!v){$("#vf-err").textContent="Isi jawaban dulu.";return}
+ if(v.indexOf(state.sel.a)<0){$("#vf-err").textContent="Jawaban belum sesuai. Periksa lagi ciri barangmu lalu coba kembali.";return}
+ state.sel.status=Math.max(state.sel.status,2);state.mine=state.sel;toast("Verifikasi berhasil");go("status");
+};
+$("#roleBtn").onclick=function(){state.role=state.role=="user"?"staff":"user";$("#roleBtn").textContent="Peran: "+(state.role=="user"?"Pengguna":"Petugas");if(state.role=="staff")go("staff");else go("home");toast("Beralih ke tampilan "+(state.role=="user"?"pengguna":"petugas"))};
+window.addEventListener("hashchange",route);route();
+</script>
+</body>
+</html>
